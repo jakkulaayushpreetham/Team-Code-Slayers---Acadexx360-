@@ -1,5 +1,6 @@
 import Upload from "./pages/Upload";
 import Notes from "./pages/Notes";
+
 import Leaderboard from "./pages/Leaderboard";
 import Dashboard from "./pages/Dashboard";
 import "./App.css";
@@ -29,3 +30,4 @@ export default function App() {
     </div>
   );
 }
+

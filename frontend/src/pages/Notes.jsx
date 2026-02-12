@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/api";
 import NoteCard from "../components/NoteCard";
 import Filters from "../components/Filters";
 
@@ -32,4 +31,5 @@ export default function Notes() {
             </div>
         </div>
     );
+
 }
