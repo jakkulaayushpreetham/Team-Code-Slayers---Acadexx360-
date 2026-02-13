@@ -30,7 +30,7 @@ export default function Upload() {
     e.preventDefault();
 
     if (!file) {
-      alert("Please select a file!");
+      alert("Please select a file to upload.");
       return;
     }
 
@@ -47,7 +47,7 @@ export default function Upload() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Notes uploaded successfully!");
+      alert("Your notes have been submitted successfully.");
 
       setTitle("");
       setSubject("");
@@ -59,113 +59,187 @@ export default function Upload() {
       fetchLeaderboard();
     } catch (err) {
       console.log("Upload failed:", err);
-      alert("Upload failed!");
+      alert("Submission failed. Please try again.");
     }
   };
 
   return (
     <PageWrapper
-      title="📤 Upload Notes"
-      subtitle="Contribute notes to help your campus. Earn points and climb the leaderboard."
+      title="Academic Notes Submission Portal"
+      subtitle="Submit verified academic resources for your department. All submissions are reviewed."
     >
-      <div style={styles.grid}>
-        <div style={styles.card}>
-          <h2 style={styles.heading}>Upload Form</h2>
+      <div style={styles.layout}>
+        {/* Submission Form */}
+        <div style={styles.formCard}>
+          <h2 style={styles.heading}>Submission Form</h2>
+          <p style={styles.helper}>
+            Please ensure the information provided is accurate. Submissions may be reviewed by faculty or moderators.
+          </p>
 
           <form onSubmit={handleSubmit} style={styles.form}>
-            <input
-              style={styles.input}
-              placeholder="Notes Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <Field label="Title of Notes">
+              <input
+                style={styles.input}
+                placeholder="e.g., Unit-3 Operating Systems Notes"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </Field>
 
-            <input
-              style={styles.input}
-              placeholder="Subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              required
-            />
+            <Field label="Subject">
+              <input
+                style={styles.input}
+                placeholder="e.g., Operating Systems"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                required
+              />
+            </Field>
 
-            <input
-              style={styles.input}
-              placeholder="Department (CSE/ECE/AI&DS)"
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              required
-            />
+            <div style={styles.row}>
+              <Field label="Department">
+                <input
+                  style={styles.input}
+                  placeholder="e.g., CSE / IT / AI & DS"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  required
+                />
+              </Field>
 
-            <input
-              style={styles.input}
-              placeholder="Semester (1-8)"
-              value={semester}
-              onChange={(e) => setSemester(e.target.value)}
-              required
-            />
+              <Field label="Semester">
+                <input
+                  style={styles.input}
+                  placeholder="1 to 8"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  required
+                />
+              </Field>
+            </div>
 
-            <input
-              style={styles.input}
-              placeholder="Your Name"
-              value={uploadedBy}
-              onChange={(e) => setUploadedBy(e.target.value)}
-              required
-            />
+            <Field label="Contributor Name">
+              <input
+                style={styles.input}
+                placeholder="Your full name"
+                value={uploadedBy}
+                onChange={(e) => setUploadedBy(e.target.value)}
+                required
+              />
+            </Field>
 
-            <input
-              style={styles.input}
-              type="file"
-              onChange={(e) => setFile(e.target.files[0])}
-              required
-            />
+            <Field label="Upload File (PDF / DOC / PPT)">
+              <input
+                style={styles.input}
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                required
+              />
+            </Field>
 
-            <button style={styles.btn} type="submit">
-              Upload Notes 🚀
+            <button style={styles.submitBtn} type="submit">
+              Submit for Review
             </button>
           </form>
         </div>
 
-        <LeaderboardWidget data={leaderboard} />
+        {/* Leaderboard */}
+        <div style={styles.sidePanel}>
+          <h3 style={styles.sideHeading}>Top Contributors</h3>
+          <p style={styles.sideHelper}>
+            Contributors are ranked based on quality and usefulness of submissions.
+          </p>
+          <LeaderboardWidget data={leaderboard} />
+        </div>
       </div>
     </PageWrapper>
   );
 }
 
+function Field({ label, children }) {
+  return (
+    <div style={styles.field}>
+      <label style={styles.label}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
 const styles = {
-  grid: {
+  layout: {
     display: "grid",
-    gridTemplateColumns: "2fr 1fr",
-    gap: "18px",
+    gridTemplateColumns: "2.2fr 1fr",
+    gap: "20px",
   },
-  card: {
-    padding: "22px",
-    borderRadius: "16px",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.08)",
+  formCard: {
+    padding: "26px",
+    borderRadius: "14px",
+    background: "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
+    border: "1px solid rgba(255,255,255,0.12)",
+    boxShadow: "0 12px 28px rgba(0,0,0,0.4)",
   },
   heading: {
-    marginBottom: "15px",
+    fontSize: "1.4rem",
+    marginBottom: "6px",
+  },
+  helper: {
+    fontSize: "0.9rem",
+    opacity: 0.75,
+    marginBottom: "18px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
+    gap: "14px",
+  },
+  row: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: "12px",
   },
+  field: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
+  label: {
+    fontSize: "0.8rem",
+    letterSpacing: "0.4px",
+    opacity: 0.8,
+    textTransform: "uppercase",
+  },
   input: {
-    padding: "12px",
-    borderRadius: "12px",
-    border: "1px solid rgba(255,255,255,0.15)",
-    background: "rgba(0,0,0,0.25)",
+    padding: "12px 12px",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.18)",
+    background: "rgba(0,0,0,0.35)",
     color: "white",
     outline: "none",
+    fontSize: "0.95rem",
   },
-  btn: {
+  submitBtn: {
+    marginTop: "6px",
     padding: "12px",
-    borderRadius: "12px",
-    border: "none",
-    background: "#38bdf8",
-    fontWeight: "bold",
+    borderRadius: "8px",
+    border: "1px solid rgba(56,189,248,.7)",
+    background: "linear-gradient(135deg, rgba(56,189,248,.9), rgba(34,211,238,.9))",
+    color: "#002b36",
+    fontWeight: 800,
     cursor: "pointer",
+  },
+  sidePanel: {
+    padding: "20px",
+    borderRadius: "14px",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.1)",
+  },
+  sideHeading: {
+    marginBottom: "6px",
+  },
+  sideHelper: {
+    fontSize: "0.85rem",
+    opacity: 0.7,
+    marginBottom: "10px",
   },
 };

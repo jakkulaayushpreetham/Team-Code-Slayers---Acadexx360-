@@ -3,13 +3,15 @@ import api from "../api/api";
 
 export default function NoteCard({ note }) {
   const handleDownload = () => {
-    window.open(note.fileUrl, "_blank");
+    // backend is serving uploads folder publicly
+    window.open("http://localhost:5000/" + note.fileUrl, "_blank");
   };
 
   const handleRate = async (value) => {
     try {
       await api.post(`/rate/${note._id}`, { rating: value });
       alert("Rating submitted successfully!");
+      window.location.reload(); // simple refresh for hackathon
     } catch (err) {
       console.log(err);
       alert("Rating failed!");
@@ -77,11 +79,13 @@ const styles = {
     fontSize: "0.8rem",
     background: "rgba(56,189,248,0.2)",
     border: "1px solid rgba(56,189,248,0.3)",
+    color: "white",
   },
   meta: {
     opacity: 0.85,
     marginBottom: "6px",
     fontSize: "0.95rem",
+    color: "white",
   },
   ratingBox: {
     display: "flex",

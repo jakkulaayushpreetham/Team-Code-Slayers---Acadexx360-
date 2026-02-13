@@ -1,114 +1,99 @@
-import React from "react";
-
-const SEMS = ["All", "1", "2", "3", "4", "5", "6", "7", "8"];
-const SUBJECTS = [
-  "All",
-  "DSA",
-  "Cryptography",
-  "Data Mining",
-  "Deep Learning",
-  "Theory of Computation",
-  "Compiler Design",
-  "Web Development",
-];
-
-const DEPTS = ["All", "IT", "CSE", "AI", "DS"];
-
-export default function Filters({
-  department,
-  semester,
-  subject,
-  setDepartment,
-  setSemester,
-  setSubject,
-}) {
-  return (
-    <div style={styles.wrap}>
-      <FilterRow
-        label="Department"
-        options={DEPTS}
-        active={department}
-        onChange={setDepartment}
-      />
-      <FilterRow
-        label="Semester"
-        options={SEMS}
-        active={semester}
-        onChange={setSemester}
-      />
-      <FilterRow
-        label="Subject"
-        options={SUBJECTS}
-        active={subject}
-        onChange={setSubject}
-      />
-    </div>
-  );
-}
-
-function FilterRow({ label, options, active, onChange }) {
-  return (
-    <div style={styles.row}>
-      <span style={styles.label}>{label}</span>
-      <div style={styles.pills}>
-        {options.map((opt) => {
-          const isActive = active === opt || (active === "All" && opt === "All");
-          return (
-            <button
-              key={opt}
-              onClick={() => onChange(opt)}
-              style={{
-                ...styles.pill,
-                ...(isActive ? styles.pillActive : {}),
-              }}
-            >
-              {opt === "All" ? "All" : opt}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 const styles = {
-  wrap: {
+  panel: {
     marginTop: "18px",
-    padding: "16px",
-    borderRadius: "16px",
-    background: "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
-    backdropFilter: "blur(10px)",
-    border: "1px solid rgba(255,255,255,0.15)",
+    padding: "20px 20px 16px",
+    borderRadius: "20px",
+    background:
+      "radial-gradient(800px 400px at 10% 0%, rgba(56,189,248,.12), transparent), linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03))",
+    backdropFilter: "blur(16px)",
+    border: "1px solid rgba(255,255,255,0.22)",
+    boxShadow: "0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)",
   },
-  row: {
-    marginBottom: "12px",
-  },
-  label: {
-    display: "block",
-    marginBottom: "6px",
-    fontSize: "0.9rem",
-    opacity: 0.8,
-  },
-  pills: {
+
+  header: {
     display: "flex",
-    gap: "8px",
-    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "14px",
   },
-  pill: {
-    padding: "8px 14px",
+
+  reset: {
+    background: "linear-gradient(135deg, rgba(56,189,248,.12), rgba(56,189,248,.05))",
+    color: "#7dd3fc",
+    border: "1px solid rgba(56,189,248,.5)",
+    padding: "6px 12px",
     borderRadius: "999px",
-    border: "1px solid rgba(255,255,255,0.25)",
-    background: "rgba(0,0,0,0.25)",
+    cursor: "pointer",
+    fontSize: "0.75rem",
+    letterSpacing: "0.3px",
+    transition: "all .15s ease",
+  },
+
+  group: {
+    marginBottom: "16px",
+  },
+
+  groupTitle: {
+    fontSize: "0.7rem",
+    letterSpacing: "1.2px",
+    opacity: 0.7,
+    marginBottom: "8px",
+    textTransform: "uppercase",
+  },
+
+  segment: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(70px, max-content))",
+    gap: "8px",
+  },
+
+  segmentBtn: {
+    padding: "9px 16px",
+    borderRadius: "12px",
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25))",
+    border: "1px solid rgba(255,255,255,0.18)",
     color: "white",
     cursor: "pointer",
-    transition: "all .2s ease",
-    fontSize: "0.85rem",
+    fontSize: "0.8rem",
+    letterSpacing: "0.2px",
+    transition: "all .18s ease",
+    boxShadow: "inset 0 1px 1px rgba(0,0,0,0.6)",
   },
-  pillActive: {
-    background: "linear-gradient(135deg, #38bdf8, #22d3ee)",
+
+  segmentBtnActive: {
+    background:
+      "linear-gradient(135deg, rgba(56,189,248,.95), rgba(34,211,238,.95))",
     color: "#002b36",
     border: "none",
-    boxShadow: "0 6px 16px rgba(56,189,248,.45)",
-    fontWeight: "bold",
+    boxShadow: "0 10px 26px rgba(56,189,248,.5)",
+    fontWeight: 700,
+  },
+
+  activeBar: {
+    marginTop: "14px",
+    padding: "10px 12px",
+    borderRadius: "14px",
+    background:
+      "linear-gradient(135deg, rgba(0,0,0,.55), rgba(0,0,0,.35))",
+    border: "1px solid rgba(255,255,255,0.14)",
+    display: "flex",
+    gap: "8px",
+    alignItems: "center",
+    flexWrap: "wrap",
+    fontSize: "0.75rem",
+    letterSpacing: "0.2px",
+    boxShadow: "inset 0 1px 1px rgba(0,0,0,0.7)",
+  },
+
+  activePill: {
+    padding: "4px 10px",
+    borderRadius: "999px",
+    background:
+      "linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,211,238,.15))",
+    color: "#7dd3fc",
+    border: "1px solid rgba(56,189,248,.45)",
+    fontWeight: 600,
+    fontSize: "0.7rem",
   },
 };
