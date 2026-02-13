@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
+import api from "../api/api";
 
 export default function NoteCard({ note }) {
-  const [rating, setRating] = useState(note.rating);
+  const handleDownload = () => {
+    // backend is serving uploads folder publicly
+    window.open("http://localhost:5000/" + note.fileUrl, "_blank");
+  };
 
-  const handleRate = (value) => {
-    setRating(value);
-    alert(`You rated "${note.title}" as ${value} stars ⭐`);
+  const handleRate = async (value) => {
+    try {
+      await api.post(`/rate/${note._id}`, { rating: value });
+      alert("Rating submitted successfully!");
+      window.location.reload(); // simple refresh for hackathon
+    } catch (err) {
+      console.log(err);
+      alert("Rating failed!");
+    }
   };
 
   return (
@@ -23,11 +33,7 @@ export default function NoteCard({ note }) {
       </p>
 
       <p style={styles.meta}>
-        📥 Downloads: <b>{note.downloads}</b>
-      </p>
-
-      <p style={styles.meta}>
-        ⭐ Rating: <b>{rating}</b>
+        ⭐ Rating: <b>{note.rating?.toFixed(1)}</b> ({note.ratingCount} votes)
       </p>
 
       <div style={styles.ratingBox}>
@@ -42,7 +48,9 @@ export default function NoteCard({ note }) {
         </button>
       </div>
 
-      <button style={styles.downloadBtn}>Download</button>
+      <button style={styles.downloadBtn} onClick={handleDownload}>
+        Download
+      </button>
     </div>
   );
 }
@@ -54,7 +62,6 @@ const styles = {
     background: "rgba(255,255,255,0.05)",
     border: "1px solid rgba(255,255,255,0.08)",
     boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
-    transition: "0.3s",
   },
   title: {
     fontSize: "1.2rem",
@@ -72,11 +79,13 @@ const styles = {
     fontSize: "0.8rem",
     background: "rgba(56,189,248,0.2)",
     border: "1px solid rgba(56,189,248,0.3)",
+    color: "white",
   },
   meta: {
     opacity: 0.85,
     marginBottom: "6px",
     fontSize: "0.95rem",
+    color: "white",
   },
   ratingBox: {
     display: "flex",
