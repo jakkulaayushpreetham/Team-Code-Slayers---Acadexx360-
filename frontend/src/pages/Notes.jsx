@@ -1,41 +1,74 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import NoteCard from "../components/NoteCard";
 import Filters from "../components/Filters";
-import { notesData } from "../data/dummyData";
+import api from "../api/api";
 
 export default function Notes() {
+  const [notes, setNotes] = useState([]);
   const [search, setSearch] = useState("");
+
   const [department, setDepartment] = useState("All");
   const [semester, setSemester] = useState("All");
   const [subject, setSubject] = useState("All");
 
-  const filteredNotes = useMemo(() => {
-    return notesData.filter((note) => {
-      const matchesSearch =
-        note.title.toLowerCase().includes(search.toLowerCase()) ||
-        note.subject.toLowerCase().includes(search.toLowerCase());
+  const fetchNotes = async () => {
+    try {
+      let url = "/notes/search?";
 
-      const matchesDept = department === "All" || note.department === department;
-      const matchesSem = semester === "All" || note.semester === semester;
-      const matchesSub = subject === "All" || note.subject === subject;
+      if (department !== "All") url += `department=${department}&`;
+      if (semester !== "All") url += `semester=${semester}&`;
+      if (subject !== "All") url += `subject=${subject}&`;
+      if (search.trim() !== "") url += `search=${search}&`;
 
-      return matchesSearch && matchesDept && matchesSem && matchesSub;
-    });
-  }, [search, department, semester, subject]);
+      const res = await api.get(url);
+      setNotes(res.data);
+    } catch (err) {
+      console.log("Error fetching notes:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [department, semester, subject]);
 
   return (
     <PageWrapper
       title="📚 Notes Library"
       subtitle="Browse notes uploaded by students. Search, filter, and download the best resources."
     >
-      <div style={styles.searchBox}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
         <input
-          style={styles.searchInput}
+          style={{
+            width: "100%",
+            maxWidth: "600px",
+            padding: "12px 14px",
+            borderRadius: "12px",
+            border: "1px solid rgba(255,255,255,0.2)",
+            outline: "none",
+            background: "rgba(0,0,0,0.25)",
+            color: "white",
+            fontSize: "1rem",
+          }}
           placeholder="Search by title or subject..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+
+        <button
+          onClick={fetchNotes}
+          style={{
+            marginLeft: "10px",
+            padding: "12px 16px",
+            borderRadius: "12px",
+            border: "none",
+            background: "#38bdf8",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
       </div>
 
       <Filters
@@ -47,38 +80,20 @@ export default function Notes() {
         setSubject={setSubject}
       />
 
-      <div style={styles.grid}>
-        {filteredNotes.length === 0 ? (
+      <div
+        style={{
+          marginTop: "25px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "16px",
+        }}
+      >
+        {notes.length === 0 ? (
           <p style={{ opacity: 0.7 }}>No notes found.</p>
         ) : (
-          filteredNotes.map((note) => <NoteCard key={note.id} note={note} />)
+          notes.map((note) => <NoteCard key={note._id} note={note} />)
         )}
       </div>
     </PageWrapper>
   );
 }
-
-const styles = {
-  searchBox: {
-    marginBottom: "18px",
-    display: "flex",
-    justifyContent: "center",
-  },
-  searchInput: {
-    width: "100%",
-    maxWidth: "600px",
-    padding: "12px 14px",
-    borderRadius: "12px",
-    border: "1px solid rgba(255,255,255,0.2)",
-    outline: "none",
-    background: "rgba(0,0,0,0.25)",
-    color: "white",
-    fontSize: "1rem",
-  },
-  grid: {
-    marginTop: "25px",
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-    gap: "16px",
-  },
-};

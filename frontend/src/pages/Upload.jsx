@@ -1,24 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import LeaderboardWidget from "../components/LeaderboardWidget";
-import { leaderboardData } from "../data/dummyData";
+import api from "../api/api";
 
 export default function Upload() {
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState("");
+  const [uploadedBy, setUploadedBy] = useState("");
   const [file, setFile] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Uploaded Successfully! (Backend integration pending)");
+  const [leaderboard, setLeaderboard] = useState([]);
 
-    setTitle("");
-    setSubject("");
-    setDepartment("");
-    setSemester("");
-    setFile(null);
+  const fetchLeaderboard = async () => {
+    try {
+      const res = await api.get("/leaderboard");
+      setLeaderboard(res.data);
+    } catch (err) {
+      console.log("Error fetching leaderboard:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!file) {
+      alert("Please select a file!");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("subject", subject);
+      formData.append("department", department);
+      formData.append("semester", semester);
+      formData.append("uploadedBy", uploadedBy);
+      formData.append("file", file);
+
+      await api.post("/notes/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      alert("Notes uploaded successfully!");
+
+      setTitle("");
+      setSubject("");
+      setDepartment("");
+      setSemester("");
+      setUploadedBy("");
+      setFile(null);
+
+      fetchLeaderboard();
+    } catch (err) {
+      console.log("Upload failed:", err);
+      alert("Upload failed!");
+    }
   };
 
   return (
@@ -65,6 +107,14 @@ export default function Upload() {
 
             <input
               style={styles.input}
+              placeholder="Your Name"
+              value={uploadedBy}
+              onChange={(e) => setUploadedBy(e.target.value)}
+              required
+            />
+
+            <input
+              style={styles.input}
               type="file"
               onChange={(e) => setFile(e.target.files[0])}
               required
@@ -74,15 +124,9 @@ export default function Upload() {
               Upload Notes 🚀
             </button>
           </form>
-
-          <div style={styles.info}>
-            <p>✅ Earn points for each upload</p>
-            <p>⭐ Higher rated notes rank higher</p>
-            <p>🏆 Top contributors get featured</p>
-          </div>
         </div>
 
-        <LeaderboardWidget data={leaderboardData} />
+        <LeaderboardWidget data={leaderboard} />
       </div>
     </PageWrapper>
   );
@@ -123,10 +167,5 @@ const styles = {
     background: "#38bdf8",
     fontWeight: "bold",
     cursor: "pointer",
-  },
-  info: {
-    marginTop: "18px",
-    opacity: 0.85,
-    lineHeight: "1.6",
   },
 };
