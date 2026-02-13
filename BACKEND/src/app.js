@@ -10,8 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/notes", notesRoutes);
-app.use("/rate", ratingRoutes);
-app.use("/leaderboard", leaderboardRoutes);
+app.use("/api/notes", notesRoutes);
+app.use("/api/rate", ratingRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
+
 
 module.exports = app;
