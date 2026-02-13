@@ -1,31 +1,26 @@
-import Upload from "./pages/Upload";
-import Notes from "./pages/Notes";
-import Leaderboard from "./pages/Leaderboard";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+
+import Home from "./pages/home";
 import Dashboard from "./pages/Dashboard";
-import "./App.css";
+import Notes from "./pages/Notes";
+import Upload from "./pages/Upload";
+import Leaderboard from "./pages/Leaderboard";
 
 export default function App() {
   return (
-    <div className="app">
-      <div className="navbar">📚 Acadexx360 - Smart Notes Hub</div>
+    <BrowserRouter>
+      <Navbar />
 
-      <div className="main-content">
-        <div className="section">
-          <Upload />
-        </div>
-
-        <div className="section">
-          <Notes />
-        </div>
-
-        <div className="section">
-          <Leaderboard />
-        </div>
-
-        <div className="section">
-          <Dashboard />
-        </div>
-      </div>
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

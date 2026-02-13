@@ -1,0 +1,53 @@
+export const notesData = [
+  {
+    id: 1,
+    title: "DBMS Unit-1 Notes",
+    subject: "DBMS",
+    semester: "3",
+    department: "CSE",
+    type: "PDF",
+    uploadedBy: "Goutham",
+    downloads: 120,
+    rating: 4.6,
+  },
+  {
+    id: 2,
+    title: "Operating Systems Scheduling",
+    subject: "OS",
+    semester: "4",
+    department: "CSE",
+    type: "PDF",
+    uploadedBy: "Ravi",
+    downloads: 88,
+    rating: 4.2,
+  },
+  {
+    id: 3,
+    title: "CN Important Questions",
+    subject: "Computer Networks",
+    semester: "5",
+    department: "CSE",
+    type: "PDF",
+    uploadedBy: "Anjali",
+    downloads: 140,
+    rating: 4.8,
+  },
+  {
+    id: 4,
+    title: "Python ML Basics Notes",
+    subject: "Machine Learning",
+    semester: "6",
+    department: "AI&DS",
+    type: "PDF",
+    uploadedBy: "Sai",
+    downloads: 65,
+    rating: 4.0,
+  },
+];
+
+export const leaderboardData = [
+  { name: "Goutham", points: 250, uploads: 12 },
+  { name: "Anjali", points: 210, uploads: 10 },
+  { name: "Ravi", points: 190, uploads: 9 },
+  { name: "Sai", points: 160, uploads: 7 },
+];
