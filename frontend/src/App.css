@@ -1,26 +1,44 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-  background: #f4f6fb;
-  color: #222;
 }
 
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 20px;
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #f4f6fb;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .navbar {
+  width: 100%;
   background: #1d3557;
   padding: 18px;
   color: white;
   font-size: 22px;
   font-weight: 700;
-  border-radius: 12px;
-  margin-bottom: 20px;
   text-align: center;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.main-content {
+  width: 100%;
+  flex: 1;
+  padding: 20px;
 }
 
 .section {
@@ -28,11 +46,12 @@ body {
 }
 
 h2 {
-  margin: 0 0 12px 0;
+  margin-bottom: 12px;
   color: #1d3557;
 }
 
 .card {
+  width: 100%;
   background: white;
   padding: 18px;
   border-radius: 14px;
@@ -60,6 +79,7 @@ input, select {
   border-radius: 10px;
   border: 1px solid #ccc;
   outline: none;
+  width: 100%;
 }
 
 .notes-grid {
@@ -79,7 +99,6 @@ input, select {
 .note-title {
   font-weight: 700;
   font-size: 16px;
-  margin: 0;
 }
 
 .note-meta {
