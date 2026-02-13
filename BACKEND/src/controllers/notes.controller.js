@@ -1,5 +1,6 @@
 const Note = require("../models/Note");
-const uploadToCloudinary = require("../services/upload.service");
+// const uploadToCloudinary = require("../services/upload.service");
+
 
 exports.uploadNote = async (req, res) => {
   try {
@@ -7,11 +8,9 @@ exports.uploadNote = async (req, res) => {
       return res.status(400).json({ error: "File is required" });
     }
 
-    const fileUrl = await uploadToCloudinary(req.file.path);
-
     const note = await Note.create({
       ...req.body,
-      fileUrl,
+      fileUrl: req.file.path, // store local path
     });
 
     res.status(201).json({
@@ -22,6 +21,7 @@ exports.uploadNote = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 exports.getNotes = async (req, res) => {
   try {
