@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import api from "../api/api";
-import api from "../api/api";
-
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
 
