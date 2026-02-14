@@ -1,4 +1,57 @@
+const PDFDocument = require("pdfkit");
 const Note = require("../models/Note");
+
+exports.downloadEnhancedPDF = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+
+    if (!note) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${note.title.replace(/\s+/g, "_")}_Enhanced.pdf"`
+    );
+
+    const doc = new PDFDocument({ margin: 50 });
+
+    doc.fontSize(20).text("Acadex - Enhanced Notes", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(14).text(`Title: ${note.title}`);
+    doc.text(`Department: ${note.department}`);
+    doc.text(`Semester: ${note.semester}`);
+    doc.text(`Subject: ${note.subject}`);
+    doc.text(`Uploaded By: ${note.uploadedBy}`);
+    doc.moveDown();
+
+    if (note.tags && note.tags.length > 0) {
+      doc.fontSize(12).text("Tags: " + note.tags.join(", "));
+      doc.moveDown();
+    }
+
+    if (note.summary) {
+      doc.fontSize(14).text("AI Summary:", { underline: true });
+      doc.moveDown(0.5);
+      doc.fontSize(12).text(note.summary);
+      doc.moveDown();
+    }
+
+    doc.fontSize(14).text("Extracted & Enhanced Content:", { underline: true });
+    doc.moveDown(0.5);
+
+    doc.fontSize(12).text(note.extractedText || "No extracted text available.");
+
+    doc.end();
+    doc.pipe(res);
+  } catch (err) {
+    console.log("PDF Error:", err.message);
+    res.status(500).json({ error: "PDF generation failed" });
+  }
+};
+
 
 // ==========================
 // Upload Note

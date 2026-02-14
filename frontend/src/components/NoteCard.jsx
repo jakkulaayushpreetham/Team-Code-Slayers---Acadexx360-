@@ -5,7 +5,7 @@ export default function NoteCard({ note }) {
   const [rating, setRating] = useState(note.rating || 0);
   const [ratingCount, setRatingCount] = useState(note.ratingCount || 0);
 
-  // tags safety: if backend sends string, convert to array
+  // tags safety
   let tagsArray = [];
   if (Array.isArray(note.tags)) {
     tagsArray = note.tags;
@@ -17,19 +17,38 @@ export default function NoteCard({ note }) {
     }
   }
 
+  // Normal download (original file)
   const handleDownload = () => {
-    if (!note.fileUrl) {
+    if (!note.filePath) {
       alert("File not available!");
       return;
     }
-    window.open("http://localhost:5000/" + note.fileUrl, "_blank");
+    window.open("http://localhost:5000/" + note.filePath, "_blank");
+  };
+
+  // OCR Enhanced PDF download
+  const handleDownloadEnhancedPDF = () => {
+    window.open(
+      `http://localhost:5000/api/notes/${note._id}/download-pdf`,
+      "_blank"
+    );
+  };
+
+  const handleShare = () => {
+    if (!note.filePath) {
+      alert("File not available!");
+      return;
+    }
+
+    const url = `http://localhost:5000/${note.filePath}`;
+    navigator.clipboard.writeText(url);
+    alert("📋 Link copied!");
   };
 
   const handleRate = async (value) => {
     try {
       const res = await api.post(`/rate/${note._id}`, { rating: value });
 
-      // update UI without reload
       setRating(res.data.rating);
       setRatingCount(res.data.ratingCount);
 
@@ -46,8 +65,10 @@ export default function NoteCard({ note }) {
 
       {/* Basic Details */}
       <div style={styles.tags}>
-        <span style={styles.tag}>{note.department || "Dept"}</span>
-        <span style={styles.tag}>Sem {note.semester || "-"}</span>
+        <span style={styles.tag}>{note.dept || note.department || "Dept"}</span>
+        <span style={styles.tag}>
+          Sem {note.sem || note.semester || "-"}
+        </span>
         <span style={styles.tag}>{note.subject || "Subject"}</span>
       </div>
 
@@ -64,15 +85,15 @@ export default function NoteCard({ note }) {
 
       <p style={styles.meta}>
         Uploaded by{" "}
-        <b style={{ color: "#7dd3fc" }}>{note.uploadedBy || "Anonymous"}</b>
+        <b style={{ color: "#7dd3fc" }}>
+          {note.contributor?.name || note.uploadedBy || "Anonymous"}
+        </b>
       </p>
 
       <p style={styles.meta}>
         ⭐ Rating:{" "}
-        <b style={{ color: "#facc15" }}>
-          {Number(rating).toFixed(1)}
-        </b>{" "}
-        ({ratingCount} votes)
+        <b style={{ color: "#facc15" }}>{Number(rating).toFixed(1)}</b> (
+        {ratingCount} votes)
       </p>
 
       {/* Rating Buttons */}
@@ -88,9 +109,19 @@ export default function NoteCard({ note }) {
         ))}
       </div>
 
-      {/* Download Button */}
-      <button style={styles.downloadBtn} onClick={handleDownload}>
-        Download 📥
+      {/* Buttons Row */}
+      <div style={styles.actionRow}>
+        <button style={styles.downloadBtn} onClick={handleDownload}>
+          ⬇️ Download Original
+        </button>
+
+        <button style={styles.ocrBtn} onClick={handleDownloadEnhancedPDF}>
+          🤖 Download OCR PDF
+        </button>
+      </div>
+
+      <button style={styles.shareBtn} onClick={handleShare}>
+        🔗 Share
       </button>
     </div>
   );
@@ -103,7 +134,6 @@ const styles = {
     background: "rgba(255,255,255,0.05)",
     border: "1px solid rgba(255,255,255,0.08)",
     boxShadow: "0 6px 16px rgba(0,0,0,0.35)",
-    transition: "transform 0.2s ease",
   },
 
   title: {
@@ -169,12 +199,16 @@ const styles = {
     color: "white",
     cursor: "pointer",
     fontSize: "0.8rem",
-    transition: "0.2s",
+  },
+
+  actionRow: {
+    display: "flex",
+    gap: "10px",
+    marginTop: "14px",
   },
 
   downloadBtn: {
-    marginTop: "14px",
-    width: "100%",
+    flex: 1,
     padding: "12px",
     borderRadius: "14px",
     border: "none",
@@ -182,7 +216,31 @@ const styles = {
     color: "#002b36",
     fontWeight: "900",
     cursor: "pointer",
-    fontSize: "1rem",
-    boxShadow: "0 8px 22px rgba(56,189,248,0.35)",
+    fontSize: "0.9rem",
+  },
+
+  ocrBtn: {
+    flex: 1,
+    padding: "12px",
+    borderRadius: "14px",
+    border: "none",
+    background: "linear-gradient(135deg, #a855f7, #6366f1)",
+    color: "white",
+    fontWeight: "900",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+  },
+
+  shareBtn: {
+    marginTop: "10px",
+    width: "100%",
+    padding: "11px",
+    borderRadius: "14px",
+    border: "1px solid rgba(255,255,255,0.2)",
+    background: "rgba(255,255,255,0.05)",
+    color: "white",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontSize: "0.9rem",
   },
 };
