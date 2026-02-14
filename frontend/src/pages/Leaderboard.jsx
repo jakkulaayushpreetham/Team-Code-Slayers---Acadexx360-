@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
+import api from "../api/api";
 import api from "../api/api";
 
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -13,83 +13,30 @@ export default function Leaderboard() {
         setLeaderboard(res.data);
       } catch (err) {
         console.log("Error fetching leaderboard:", err);
-      } finally {
-        setLoading(false);
       }
     };
+
     fetchLeaderboard();
   }, []);
-
-  const getRankEmoji = (index) => {
-    if (index === 0) return "🥇";
-    if (index === 1) return "🥈";
-    if (index === 2) return "🥉";
-    return `#${index + 1}`;
-  };
 
   return (
     <PageWrapper
       title="🏆 Leaderboard"
-      subtitle="Top contributors who helped the community by uploading high-quality academic resources."
+      subtitle="Top contributors who helped the community by uploading high-quality notes."
     >
-      <div style={styles.wrapper}>
-        {loading ? (
-          <p style={{ textAlign: "center", opacity: 0.7 }}>Loading leaderboard...</p>
-        ) : leaderboard.length === 0 ? (
-          <div style={styles.empty}>
-            <p style={{ fontSize: "2.5rem" }}>🏆</p>
-            <p>No contributors yet. Be the first to upload notes!</p>
-          </div>
+      <div style={styles.table}>
+        {leaderboard.length === 0 ? (
+          <p style={{ opacity: 0.7 }}>No contributors yet.</p>
         ) : (
-          <>
-            {/* Top 3 podium */}
-            {leaderboard.length >= 3 && (
-              <div style={styles.podium}>
-                {[1, 0, 2].map((idx) => {
-                  const c = leaderboard[idx];
-                  if (!c) return null;
-                  return (
-                    <div
-                      key={idx}
-                      style={{
-                        ...styles.podiumCard,
-                        ...(idx === 0 ? styles.podiumFirst : {}),
-                      }}
-                    >
-                      <span style={styles.podiumEmoji}>{getRankEmoji(idx)}</span>
-                      <p style={styles.podiumName}>{c.name || "Anonymous"}</p>
-                      <p style={styles.podiumUploads}>{c.uploads} uploads</p>
-                      <p style={styles.podiumRating}>⭐ {c.avgRating || 0}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Full Table */}
-            <div style={styles.table}>
-              <div style={styles.tableHeader}>
-                <span>Rank</span>
-                <span>Contributor</span>
-                <span>Uploads</span>
-                <span>Avg Rating</span>
-              </div>
-              {leaderboard.map((c, index) => (
-                <div
-                  key={index}
-                  style={{
-                    ...styles.row,
-                    ...(index < 3 ? styles.topRow : {}),
-                  }}
-                >
-                  <span style={styles.rank}>{getRankEmoji(index)}</span>
-                  <span style={styles.name}>{c.name || "Anonymous"}</span>
-                  <span style={styles.uploads}>{c.uploads} uploads</span>
-                  <span style={styles.rating}>⭐ {c.avgRating || 0}</span>
-                </div>
-              ))}
+          leaderboard.map((c, index) => (
+            <div key={index} style={styles.row}>
+              <span style={styles.rank}>#{index + 1}</span>
+              <span style={styles.name}>{c.name || c._id}</span>
+              <span style={styles.uploads}>
+                {c.uploads || c.count} uploads
+              </span>
             </div>
-          </>
+          ))
         )}
       </div>
     </PageWrapper>
@@ -162,9 +109,9 @@ const styles = {
   },
   row: {
     display: "grid",
-    gridTemplateColumns: "0.6fr 2fr 1fr 1fr",
-    padding: "16px 20px",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    gridTemplateColumns: "0.5fr 2fr 1fr",
+    padding: "14px",
+    borderBottom: "1px solid rgba(255,255,255,0.08)",
     alignItems: "center",
     transition: "background 0.15s",
   },
@@ -179,16 +126,7 @@ const styles = {
     fontWeight: 600,
   },
   uploads: {
-    opacity: 0.85,
-    fontSize: "0.92rem",
-  },
-  rating: {
-    fontWeight: 600,
-    fontSize: "0.92rem",
-  },
-  empty: {
-    textAlign: "center",
-    padding: "60px 20px",
-    opacity: 0.7,
+    opacity: 0.8,
+    textAlign: "right",
   },
 };
