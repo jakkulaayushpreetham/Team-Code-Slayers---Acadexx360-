@@ -1,19 +1,21 @@
 const mongoose = require("mongoose");
 
-const NoteSchema = new mongoose.Schema(
+const noteSchema = new mongoose.Schema(
     {
         title: String,
-        department: String,
-        semester: String,
+        dept: String,
+        sem: String,
         subject: String,
         tags: [String],
-        summary: String,
-        fileUrl: String,
-        uploadedBy: String,
-        rating: { type: Number, default: 0 },
-        ratingCount: { type: Number, default: 0 },
+        filePath: String,
+        extractedText: String,
+
+        contributor: {
+            name: String,
+            email: String,
+        },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Note", NoteSchema);
+module.exports = mongoose.model("Note", noteSchema);

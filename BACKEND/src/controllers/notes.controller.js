@@ -1,59 +1,90 @@
 const Note = require("../models/Note");
-// const uploadToCloudinary = require("../services/upload.service");
 
-
+// Upload note
 exports.uploadNote = async (req, res) => {
   try {
+    const { title, dept, sem, subject, tags } = req.body;
+
     if (!req.file) {
       return res.status(400).json({ error: "File is required" });
     }
 
     const note = await Note.create({
-      ...req.body,
-      fileUrl: req.file.path, // store local path
+      title,
+      dept,
+      sem,
+      subject,
+      tags: tags ? tags.split(",") : [],
+      filePath: req.file.path,
+      extractedText: "", // fill later if OCR runs
     });
 
-    res.status(201).json({
-      message: "Note uploaded successfully",
-      note,
-    });
+    res.status(201).json(note);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Upload failed" });
   }
 };
 
-
+// Get all notes
 exports.getNotes = async (req, res) => {
   try {
     const notes = await Note.find().sort({ createdAt: -1 });
     res.json(notes);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Get notes error:", err);
+    res.status(500).json({ error: "Failed to fetch notes" });
   }
 };
 
+// 🔥 Search + Filters
 exports.searchNotes = async (req, res) => {
   try {
-    const { department, semester, subject, tag, search } = req.query;
+    const { q, dept, sem, subject, tags } = req.query;
 
-    const query = {};
+    let filter = {};
 
-    if (department) query.department = department;
-    if (semester) query.semester = semester;
-    if (subject) query.subject = subject;
-    if (tag) query.tags = tag;
+    if (dept) filter.dept = dept;
+    if (sem) filter.sem = sem;
+    if (subject) filter.subject = subject;
 
-    // Search by title / subject keywords
-    if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { subject: { $regex: search, $options: "i" } },
+    if (q) {
+      filter.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { extractedText: { $regex: q, $options: "i" } },
+        { subject: { $regex: q, $options: "i" } },
       ];
     }
 
-    const notes = await Note.find(query).sort({ createdAt: -1 });
+    if (tags) {
+      const tagArray = tags.split(","); // tags=ai,ml
+      filter.tags = { $in: tagArray };
+    }
+
+    const notes = await Note.find(filter).sort({ createdAt: -1 });
+
     res.json(notes);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Search error:", err);
+    res.status(500).json({ error: "Search failed" });
+  }
+};
+
+// Optional: AI / OCR processing trigger
+exports.processNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const note = await Note.findById(id);
+    if (!note) return res.status(404).json({ error: "Note not found" });
+
+    // TODO: OCR / summary / tagging logic here
+    // note.extractedText = "some text";
+    // await note.save();
+
+    res.json({ message: "Processing started", note });
+  } catch (err) {
+    console.error("Process error:", err);
+    res.status(500).json({ error: "Processing failed" });
   }
 };

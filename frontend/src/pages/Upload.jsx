@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import LeaderboardWidget from "../components/LeaderboardWidget";
+
 import api from "../api/api";
 
 const CONCEPT_TAGS = [

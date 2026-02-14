@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import api from "../api/api";
 
+
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
