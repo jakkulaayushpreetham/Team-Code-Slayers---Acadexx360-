@@ -5,19 +5,19 @@ export default function LeaderboardWidget({ data }) {
     <div style={styles.card}>
       <h2 style={styles.heading}>🏆 Top Contributors</h2>
 
-      {data.length === 0 ? (
-        <p style={{ opacity: 0.7 }}>No contributors yet.</p>
+      {(!data || data.length === 0) ? (
+        <p style={styles.empty}>No contributors yet.</p>
       ) : (
         data.map((c, index) => (
           <div key={index} style={styles.row}>
             <span style={styles.rank}>#{index + 1}</span>
 
             <span style={styles.name}>
-              {c.name || c._id || "Unknown"}
+              {c._id || c.name || "Unknown"}
             </span>
 
-            <span style={styles.points}>
-              {c.uploads || c.count || 0} uploads
+            <span style={styles.uploads}>
+              {c.uploads ?? c.count ?? 0} uploads
             </span>
           </div>
         ))
@@ -29,31 +29,46 @@ export default function LeaderboardWidget({ data }) {
 const styles = {
   card: {
     background: "rgba(255,255,255,0.05)",
-    borderRadius: "14px",
+    borderRadius: "16px",
     padding: "20px",
     border: "1px solid rgba(255,255,255,0.08)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
   },
+
   heading: {
     marginBottom: "18px",
-    fontSize: "1.3rem",
+    fontSize: "1.2rem",
+    fontWeight: "800",
+    color: "white",
   },
+
+  empty: {
+    opacity: 0.7,
+    fontSize: "0.9rem",
+  },
+
   row: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px 0",
+    display: "grid",
+    gridTemplateColumns: "0.6fr 2fr 1fr",
+    alignItems: "center",
+    padding: "12px 0",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
   },
+
   rank: {
     fontWeight: "bold",
     color: "#38bdf8",
   },
+
   name: {
-    flex: 1,
-    textAlign: "center",
-    fontWeight: "600",
+    fontWeight: "700",
+    color: "white",
   },
-  points: {
-    fontWeight: "bold",
+
+  uploads: {
+    fontWeight: "700",
+    opacity: 0.85,
+    textAlign: "right",
+    color: "#f1f5f9",
   },
 };

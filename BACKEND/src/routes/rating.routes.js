@@ -32,6 +32,9 @@ router.post("/:id", async (req, res) => {
       note,
     });
   } catch (err) {
+    if (err.message.includes("buffering timed out") || err.message.includes("ECONNREFUSED")) {
+      return res.status(503).json({ error: "Database not connected" });
+    }
     res.status(500).json({ error: err.message });
   }
 });
